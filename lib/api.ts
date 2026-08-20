@@ -2,7 +2,7 @@ import axios from "axios";
 import { Product } from "@/types/product";
 
 const api = axios.create({
-  baseURL: "https://6776992512a55a9a7d0c4868.mockapi.io",
+  baseURL: process.env.NEXT_PUBLIC_PRODUCTS_API_URL,
   timeout: 10000,
 });
 
