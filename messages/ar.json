@@ -1,0 +1,58 @@
+{
+  "nav": {
+    "home": "الرئيسية",
+    "products": "المنتجات",
+    "dashboard": "لوحة التحكم",
+    "settings": "الإعدادات",
+    "soon": "قريباً"
+  },
+  "home": {
+    "title": "المعلومات الشخصية",
+    "cards": {
+      "name": { "label": "الاسم", "value": "مروان ممدوح" },
+      "age": { "label": "العمر", "value": "23.5" },
+      "email": {
+        "label": "البريد الإلكتروني",
+        "value": "marwanmamdouh159@gmail.com"
+      },
+      "phone": { "label": "رقم الهاتف", "value": "+20 127 484 7904" },
+      "university": {
+        "label": "الجامعة وسنة التخرج",
+        "value": "بكالوريوس في نظم المعلومات من معهد الالسن العالي، 2024"
+      }
+    }
+  },
+  "products": {
+    "title": "المنتجات",
+    "searchPlaceholder": "بحث بالاسم...",
+    "allVariants": "جميع الأحجام",
+    "minPrice": "الحد الأدنى للسعر",
+    "maxPrice": "الحد الأقصى للسعر",
+    "clearFilters": "مسح الفلاتر",
+    "emptyState": "لا توجد منتجات تطابق الفلاتر",
+    "productCount": "{count} منتجات",
+    "price": "السعر",
+    "variant": "الحجم",
+    "variants": {
+      "Extra Large": "كبير جداً",
+      "Large": "كبير",
+      "Medium": "متوسط",
+      "Small": "صغير"
+    }
+  },
+  "productDetail": {
+    "title": "تفاصيل المنتج",
+    "id": "المعرف",
+    "name": "الاسم",
+    "variant": "الحجم",
+    "price": "السعر",
+    "editForm": "تعديل المنتج",
+    "save": "حفظ التغييرات",
+    "saving": "جاري الحفظ...",
+    "success": "تم تحديث المنتج بنجاح",
+    "cancel": "إلغاء"
+  },
+  "common": {
+    "loading": "جاري التحميل..."
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "nav": {
+    "home": "Home",
+    "products": "Products",
+    "dashboard": "Dashboard",
+    "settings": "Settings",
+    "soon": "Soon"
+  },
+  "home": {
+    "title": "Personal Information",
+    "cards": {
+      "name": { "label": "Name", "value": "Marwan Mamdouh" },
+      "age": { "label": "Age", "value": "23.5" },
+      "email": { "label": "Email", "value": "marwanmamdouh159@gmail.com" },
+      "phone": { "label": "Phone Number", "value": "+20 127 484 7904" },
+      "university": {
+        "label": "University & Graduation Year",
+        "value": "MIS from Al-Alsun high instatute, 2024"
+      }
+    }
+  },
+  "products": {
+    "title": "Products",
+    "searchPlaceholder": "Search by name...",
+    "allVariants": "All Variants",
+    "minPrice": "Min Price",
+    "maxPrice": "Max Price",
+    "clearFilters": "Clear Filters",
+    "emptyState": "No products match your filters",
+    "productCount": "{count} products",
+    "price": "Price",
+    "variant": "Variant",
+    "variants": {
+      "Extra Large": "Extra Large",
+      "Large": "Large",
+      "Medium": "Medium",
+      "Small": "Small"
+    }
+  },
+  "productDetail": {
+    "title": "Product Details",
+    "id": "ID",
+    "name": "Name",
+    "variant": "Variant",
+    "price": "Price",
+    "editForm": "Edit Product",
+    "save": "Save Changes",
+    "saving": "Saving...",
+    "success": "Product updated successfully",
+    "cancel": "Cancel"
+  },
+  "common": {
+    "loading": "Loading..."
+  }
+}
