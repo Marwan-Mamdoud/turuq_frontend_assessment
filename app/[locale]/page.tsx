@@ -1,9 +1,13 @@
+// Home page — Server Component. Displays 5 personal info cards with data from
+// the translation dictionaries. Email and phone cards are clickable (mailto,
+// wa.me links). The `index` prop drives staggered Framer Motion animations.
 import { getTranslations } from "next-intl/server";
 import { InfoCard } from "@/components/InfoCard";
 
 export default async function HomePage() {
   const t = await getTranslations("home");
 
+  // Strip spaces from phone to build a valid wa.me link (e.g. +201274847904).
   const phoneRaw = t("cards.phone.value").replace(/\s/g, "");
 
   const cards = [

@@ -1,3 +1,9 @@
+// Client component: needs Framer Motion for staggered entrance animation.
+// Reusable info card that displays a label, value, and icon. When `href` is
+// provided, the entire card becomes a clickable link (opens in new tab).
+// The `icon` prop is a string key mapped to a Lucide component internally —
+// this avoids passing React components as props across the server/client
+// boundary, which is not allowed in React Server Components.
 "use client";
 
 import { motion } from "framer-motion";
@@ -18,8 +24,11 @@ type IconName = keyof typeof iconMap;
 interface InfoCardProps {
   label: string;
   value: string;
+  /** String key into iconMap — not a component reference, to stay RSC-safe. */
   icon: IconName;
+  /** Drives the stagger delay: each card animates in sequence. */
   index: number;
+  /** If provided, wraps the card in an <a> tag linking externally. */
   href?: string;
 }
 

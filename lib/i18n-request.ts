@@ -1,3 +1,5 @@
+// Alias for i18n.ts — used by the next-intl plugin in next.config.ts.
+// Separated so the plugin entry point is explicit.
 import { getRequestConfig } from "next-intl/server";
 import { hasLocale } from "next-intl";
 import { routing } from "./i18n-routing";

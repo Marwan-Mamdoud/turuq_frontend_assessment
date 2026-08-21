@@ -1,3 +1,5 @@
+// Loading skeleton for the product detail page. Shown while the server fetches
+// the product data. Matches the 2x2 card grid + edit form layout.
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function ProductDetailLoading() {

@@ -1,3 +1,7 @@
+// Client component: needs useRouter and usePathname to navigate to the new
+// locale route after persisting the choice.
+// Swaps between EN and AR. Persists the locale to a cookie via a Server Action,
+// then navigates to the new locale-prefixed URL (e.g. /en/... → /ar/...).
 "use client";
 
 import { useRouter, usePathname } from "next/navigation";
@@ -16,6 +20,7 @@ export function LanguageSwitcher({ currentLocale }: LanguageSwitcherProps) {
     const newLocale = currentLocale === "en" ? "ar" : "en";
     await setLocale(newLocale);
 
+    // Replace the locale segment in the current URL and navigate.
     const segments = pathname.split("/");
     segments[1] = newLocale;
     router.push(segments.join("/"));

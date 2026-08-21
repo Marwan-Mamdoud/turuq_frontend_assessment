@@ -1,3 +1,7 @@
+// Loading skeleton for the products page. Next.js shows this automatically
+// while the Server Component (products/page.tsx) is fetching data. The
+// skeleton layout mirrors the final layout (search bar + 6-card grid) so
+// the page doesn't shift when real content replaces the placeholders.
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function ProductsLoading() {

@@ -1,3 +1,15 @@
+/**
+ * Locale-aware root layout. This is where the cookie-based theme and locale
+ * are read server-side:
+ *
+ * - Theme cookie: Applied as a `dark` class on <html> before render so the
+ *   correct color scheme is present on first paint (zero flash of wrong theme).
+ * - Locale cookie: Determines `dir="rtl"` for Arabic, the `lang` attribute,
+ *   and which translation dictionary to load via next-intl.
+ *
+ * The SideNav receives both locale and theme as props so client components
+ * can stay in sync with the server-rendered state.
+ */
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { notFound } from "next/navigation";
 import { cookies } from "next/headers";
@@ -24,8 +36,13 @@ export default async function LocaleLayout({
     notFound();
   }
 
+  // Read theme from cookie server-side to avoid hydration flash. Defaults to
+  // "dark" when no cookie is set (first visit).
   const cookieStore = await cookies();
   const theme = cookieStore.get("theme")?.value === "light" ? "light" : "dark";
+
+  // Arabic is the only RTL locale — sets dir on <html> so the entire layout
+  // (nav position, text alignment, padding/margin utilities) flips correctly.
   const dir = locale === "ar" ? "rtl" : "ltr";
 
   const messages = (await import(`../../messages/${locale}.json`)).default;

@@ -1,3 +1,8 @@
+// Client component: needs useState for mobile drawer open/close, and
+// AnimatePresence for the slide animation.
+// Persistent side navigation. On desktop (md+) it's a fixed sidebar. On mobile
+// it collapses into a hamburger-triggered drawer that slides in from the edge —
+// the slide direction flips for RTL (Arabic) by checking `locale === "ar"`.
 "use client";
 
 import Link from "next/link";
@@ -19,6 +24,7 @@ import { LanguageSwitcher } from "./LanguageSwitcher";
 
 interface SideNavProps {
   locale: string;
+  /** Passed from server so the ThemeToggle button icon matches on first render. */
   theme: "light" | "dark";
 }
 
@@ -35,6 +41,7 @@ export function SideNav({ locale, theme }: SideNavProps) {
   const isRtl = locale === "ar";
   const [mobileOpen, setMobileOpen] = useState(false);
 
+  /** Highlight the active link based on the current pathname. */
   const isActive = (hrefSuffix: string) => {
     if (hrefSuffix === "") {
       return pathname === `/${locale}` || pathname === `/${locale}/`;
@@ -42,6 +49,7 @@ export function SideNav({ locale, theme }: SideNavProps) {
     return pathname.includes(hrefSuffix);
   };
 
+  // Shared nav content rendered in both the mobile drawer and the desktop sidebar.
   const navContent = (
     <nav className="flex flex-col h-full">
       <div className="p-6 pb-4">
@@ -97,6 +105,7 @@ export function SideNav({ locale, theme }: SideNavProps) {
 
   return (
     <>
+      {/* Mobile hamburger button — hidden on md+ where the sidebar is always visible. */}
       <button
         onClick={() => setMobileOpen(true)}
         className="md:hidden fixed top-4 start-4 z-50 p-2.5 rounded-xl bg-primary text-primary-foreground shadow-lg"
@@ -108,6 +117,7 @@ export function SideNav({ locale, theme }: SideNavProps) {
       <AnimatePresence>
         {mobileOpen && (
           <>
+            {/* Backdrop overlay — clicking closes the drawer. */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -115,6 +125,7 @@ export function SideNav({ locale, theme }: SideNavProps) {
               className="fixed inset-0 bg-black/50 z-40 md:hidden"
               onClick={() => setMobileOpen(false)}
             />
+            {/* Drawer slides from left in LTR, from right in RTL. */}
             <motion.aside
               initial={{ x: isRtl ? "100%" : "-100%" }}
               animate={{ x: 0 }}
@@ -135,6 +146,7 @@ export function SideNav({ locale, theme }: SideNavProps) {
         )}
       </AnimatePresence>
 
+      {/* Desktop sidebar — fixed on the left (start) side. */}
       <aside className="hidden md:flex fixed inset-y-0 start-0 z-30 w-64 bg-card border-e border-border flex-col transition-theme">
         {navContent}
       </aside>

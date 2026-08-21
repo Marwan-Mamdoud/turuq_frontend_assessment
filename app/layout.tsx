@@ -1,3 +1,6 @@
+// Root layout — intentionally minimal. Passes children through so the
+// [locale]/layout.tsx handles all rendering (theme, i18n, nav). This keeps
+// the root layout clean for Next.js metadata and global CSS imports.
 import type { Metadata } from "next";
 import "./globals.css";
 

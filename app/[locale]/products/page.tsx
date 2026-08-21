@@ -1,3 +1,7 @@
+// Products listing page — Server Component. Fetches all products server-side
+// via the centralized API client and passes the full list to the ProductFilter
+// client component. Filtering happens client-side (in-memory) to avoid
+// re-fetching on every keystroke — the server fetch runs once on page load.
 import { getTranslations } from "next-intl/server";
 import { fetchProducts } from "@/lib/api";
 import { ProductFilter } from "@/components/ProductFilter";

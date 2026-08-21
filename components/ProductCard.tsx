@@ -1,3 +1,7 @@
+// Client component: needs Framer Motion for entrance animation and
+// useTranslations/useLocale for localized variant labels and price formatting.
+// Renders a single product card that links to the product detail page.
+// Variant names are translated via the `products.variants.*` translation keys.
 "use client";
 
 import Link from "next/link";
@@ -8,6 +12,7 @@ import { Product } from "@/types/product";
 
 interface ProductCardProps {
   product: Product;
+  /** Index drives the stagger delay for the entrance animation. */
   index: number;
 }
 
@@ -15,6 +20,7 @@ export function ProductCard({ product, index }: ProductCardProps) {
   const locale = useLocale();
   const t = useTranslations("products");
 
+  // Locale-aware price formatting: Arabic uses "ar-EG" locale, English uses "en-US".
   const formattedPrice = new Intl.NumberFormat(locale === "ar" ? "ar-EG" : "en-US", {
     style: "currency",
     currency: "USD",

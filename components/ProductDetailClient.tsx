@@ -1,3 +1,9 @@
+// Client component: needs useState for editing state, local form data, and
+// success animation.
+// Inline product detail editor. Default view shows 4 data cards (ID, Name,
+// Variant, Price). Clicking "Edit" transforms the value fields into inputs.
+// Save updates local state only (no API call) — this is a UI prototype, not
+// a real CRUD backend.
 "use client";
 
 import { useState } from "react";
@@ -17,18 +23,21 @@ export function ProductDetailClient({ product }: ProductDetailClientProps) {
   const t = useTranslations("productDetail");
   const [isEditing, setIsEditing] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  // Local copy of editable fields — initialized from the server-fetched product.
   const [formData, setFormData] = useState({
     productName: product.productName,
     productVariant: product.productVariant,
     productPrice: product.productPrice,
   });
 
+  /** Persist changes to local state and show a brief success animation. */
   const handleSave = () => {
     setIsEditing(false);
     setShowSuccess(true);
     setTimeout(() => setShowSuccess(false), 2000);
   };
 
+  /** Revert formData to the original server values and exit edit mode. */
   const handleCancel = () => {
     setFormData({
       productName: product.productName,
@@ -96,6 +105,7 @@ export function ProductDetailClient({ product }: ProductDetailClientProps) {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {/* ID card — always read-only, not editable. */}
         <Card className="rounded-2xl border-0 bg-card">
           <CardContent className="p-4">
             <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">

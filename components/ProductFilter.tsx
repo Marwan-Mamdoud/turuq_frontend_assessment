@@ -1,3 +1,11 @@
+// Client component: needs useState/useMemo for client-side filtering logic.
+// Receives the full product list from the Server Component (products/page.tsx)
+// and filters entirely in-memory. This avoids re-fetching from the API on
+// every keystroke — the server fetch happens once on page load.
+//
+// The variant list is derived dynamically from the fetched data using
+// `[...new Set(products.map(...))]`, so new variants from the API appear
+// automatically without code changes.
 "use client";
 
 import { useState, useMemo, useCallback } from "react";
@@ -18,6 +26,7 @@ import { ProductCard } from "./ProductCard";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface ProductFilterProps {
+  /** Full product list fetched server-side — passed as a prop to avoid client fetch. */
   products: Product[];
 }
 
@@ -28,11 +37,15 @@ export function ProductFilter({ products }: ProductFilterProps) {
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
 
+  // Derive unique variant names from the data. Sorted alphabetically for
+  // consistent dropdown ordering across locales.
   const variants = useMemo(() => {
     const unique = [...new Set(products.map((p) => p.productVariant))];
     return unique.sort();
   }, [products]);
 
+  // Apply all filters in a single pass. Each filter is a no-op when unset
+  // (empty string or "all"), so the default state shows all products.
   const filtered = useMemo(() => {
     return products.filter((product) => {
       const matchesSearch = product.productName
@@ -61,6 +74,7 @@ export function ProductFilter({ products }: ProductFilterProps) {
     <div>
       <Card className="mb-8 rounded-2xl border-0 bg-card shadow-sm">
         <CardContent className="p-5 space-y-4">
+          {/* Search input — filters by productName, case-insensitive. */}
           <div className="relative">
             <Search className="absolute start-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
@@ -72,6 +86,9 @@ export function ProductFilter({ products }: ProductFilterProps) {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3">
+            {/* Variant dropdown — options are translated via products.variants.* keys.
+                SelectValue renders translated text directly so the trigger shows
+                the translated label, not the raw API value. */}
             <div className="flex items-center gap-2 flex-1">
               <Tag className="h-4 w-4 text-muted-foreground flex-shrink-0" />
               <Select value={selectedVariant} onValueChange={(v) => v && setSelectedVariant(v)}>
@@ -98,6 +115,7 @@ export function ProductFilter({ products }: ProductFilterProps) {
               </Select>
             </div>
 
+            {/* Price range inputs — min="0" prevents negative values. */}
             <div className="flex items-center gap-2 flex-1">
               <DollarSign className="h-4 w-4 text-muted-foreground flex-shrink-0" />
               <div className="flex items-center gap-2 w-full">
@@ -122,6 +140,7 @@ export function ProductFilter({ products }: ProductFilterProps) {
             </div>
           </div>
 
+          {/* Footer row — only visible when filters are active. Shows count + clear. */}
           {hasFilters && (
             <div className="flex items-center justify-between pt-2 border-t border-border">
               <p className="text-sm text-muted-foreground">
@@ -147,6 +166,8 @@ export function ProductFilter({ products }: ProductFilterProps) {
         </p>
       )}
 
+      {/* AnimatePresence with mode="wait" ensures the old grid fades out
+          before the new one fades in when filters change. */}
       <AnimatePresence mode="wait">
         {filtered.length === 0 ? (
           <motion.div

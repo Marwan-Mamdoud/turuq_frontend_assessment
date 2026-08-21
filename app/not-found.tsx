@@ -1,3 +1,6 @@
+// Global 404 page. Shown when Next.js can't match a route (e.g. /en/products/999
+// where the product doesn't exist). Uses the app's design language — primary
+// colored icon, large heading, and a link back to the home page.
 import Link from "next/link";
 import { Package, ArrowLeft } from "lucide-react";
 
