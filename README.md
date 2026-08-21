@@ -34,7 +34,7 @@ Assessment.
  
 1. **Clone the repository**
 ```bash
-   git clone <repository-url>
+   git clone https://github.com/Marwan-Mamdoud/turuq_frontend_assessment.git
    cd warehouse-moderator-app
 ```
  
@@ -94,18 +94,18 @@ Assessment.
 │   └── ...                      # Utility functions
 └── README.md
 ```
- 
-## Notes on Implementation
- 
-- **Theme & language persistence**: Both dark/light mode and the active locale
-  are stored in cookies and read server-side in the root layout before the
-  first paint, avoiding any flash of incorrect theme or direction.
-- **Filtering**: The products list is fetched once on the server; filtering by
-  name, variant, and price range happens client-side against that data set.
-- **RTL**: When Arabic is active, the layout switches to `dir="rtl"` and uses
-  CSS logical properties throughout, so spacing and the side navigation
-  correctly mirror.
- 
+# Implementation Notes
+
+* **Theme & language persistence:** Both dark/light mode and the active locale are stored in cookies and read server-side in the root layout before the first paint, avoiding any flash of incorrect theme or direction.
+* **Filtering:** The products list is fetched once on the server; filtering by name, variant, and price range happens client-side against that data set.
+* **RTL:** When Arabic is active, the layout switches to `dir="rtl"` and uses CSS logical properties throughout, so spacing and the side navigation correctly mirror.
+
+## Challenges
+
+* **Product API limitation:** The provided MockAPI endpoint did not reliably support fetching a single product by ID. Calling `/products/:id` returned `"Not found"`, while using the `?id=` query parameter could return multiple products with similar IDs (for example, requesting `id=1` could also return products with IDs `10`, `11`, `12`, etc.).
+* **Resolution:** To handle this limitation reliably, the implementation retrieves the available product data and performs an exact ID match in the application, ensuring that the correct product is selected for the `/products/[id]` page.
+
 ## Live Demo
 
-   https://turuqfrontendassessment.vercel.app/
+https://turuqfrontendassessment.vercel.app/
+
