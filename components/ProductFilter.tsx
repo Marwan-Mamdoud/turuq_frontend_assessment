@@ -6,11 +6,14 @@
 // The variant list is derived dynamically from the fetched data using
 // `[...new Set(products.map(...))]`, so new variants from the API appear
 // automatically without code changes.
+//
+// Pagination is also client-side: the filtered list is sliced into pages
+// based on the selected limit (default 10) and current page number.
 "use client";
 
 import { useState, useMemo, useCallback } from "react";
 import { useTranslations } from "next-intl";
-import { Search, X, Filter, Tag, DollarSign } from "lucide-react";
+import { Search, X, Filter, Tag, DollarSign, ChevronLeft, ChevronRight } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -30,12 +33,16 @@ interface ProductFilterProps {
   products: Product[];
 }
 
+const PAGE_LIMITS = [10, 20, 50, 100];
+
 export function ProductFilter({ products }: ProductFilterProps) {
   const t = useTranslations("products");
   const [search, setSearch] = useState("");
   const [selectedVariant, setSelectedVariant] = useState("all");
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
 
   // Derive unique variant names from the data. Sorted alphabetically for
   // consistent dropdown ordering across locales.
@@ -61,14 +68,23 @@ export function ProductFilter({ products }: ProductFilterProps) {
     });
   }, [products, search, selectedVariant, minPrice, maxPrice]);
 
+  // Reset to page 1 whenever filters change so the user doesn't land on an empty page.
   const clearFilters = useCallback(() => {
     setSearch("");
     setSelectedVariant("all");
     setMinPrice("");
     setMaxPrice("");
+    setPage(1);
   }, []);
 
   const hasFilters = search || selectedVariant !== "all" || minPrice || maxPrice;
+
+  // Pagination calculations.
+  const totalPages = Math.max(1, Math.ceil(filtered.length / limit));
+  const safePage = Math.min(page, totalPages);
+  const startIndex = (safePage - 1) * limit;
+  const endIndex = Math.min(startIndex + limit, filtered.length);
+  const paginatedProducts = filtered.slice(startIndex, endIndex);
 
   return (
     <div>
@@ -80,7 +96,7 @@ export function ProductFilter({ products }: ProductFilterProps) {
             <Input
               placeholder={t("searchPlaceholder")}
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => { setSearch(e.target.value); setPage(1); }}
               className="ps-10 h-11 rounded-xl bg-background"
             />
           </div>
@@ -91,7 +107,10 @@ export function ProductFilter({ products }: ProductFilterProps) {
                 the translated label, not the raw API value. */}
             <div className="flex items-center gap-2 flex-1">
               <Tag className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-              <Select value={selectedVariant} onValueChange={(v) => v && setSelectedVariant(v)}>
+              <Select
+                value={selectedVariant}
+                onValueChange={(v) => { if (v) { setSelectedVariant(v); setPage(1); } }}
+              >
                 <SelectTrigger className="h-11 rounded-lg bg-background w-full">
                   <SelectValue>
                     {selectedVariant === "all"
@@ -124,7 +143,7 @@ export function ProductFilter({ products }: ProductFilterProps) {
                   min="0"
                   placeholder={t("minPrice")}
                   value={minPrice}
-                  onChange={(e) => setMinPrice(e.target.value)}
+                  onChange={(e) => { setMinPrice(e.target.value); setPage(1); }}
                   className="h-11 rounded-xl bg-background"
                 />
                 <span className="text-muted-foreground text-sm">-</span>
@@ -133,44 +152,61 @@ export function ProductFilter({ products }: ProductFilterProps) {
                   min="0"
                   placeholder={t("maxPrice")}
                   value={maxPrice}
-                  onChange={(e) => setMaxPrice(e.target.value)}
+                  onChange={(e) => { setMaxPrice(e.target.value); setPage(1); }}
                   className="h-11 rounded-xl bg-background"
                 />
               </div>
             </div>
           </div>
 
-          {/* Footer row — only visible when filters are active. Shows count + clear. */}
-          {hasFilters && (
-            <div className="flex items-center justify-between pt-2 border-t border-border">
-              <p className="text-sm text-muted-foreground">
-                {t("productCount", { count: filtered.length })}
-              </p>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={clearFilters}
-                className="text-destructive hover:text-destructive h-8"
-              >
-                <X className="h-3.5 w-3.5 me-1" />
-                {t("clearFilters")}
-              </Button>
+          {/* Footer row — product count, clear filters, and per-page selector. */}
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-2 border-t border-border">
+            <p className="text-sm text-muted-foreground">
+              {t("productCount", { count: filtered.length })}
+            </p>
+
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-muted-foreground">{t("pagination.perPage")}:</span>
+                <Select
+                  value={String(limit)}
+                  onValueChange={(v) => { if (v) { setLimit(Number(v)); setPage(1); } }}
+                >
+                  <SelectTrigger className="h-8 w-16 rounded-lg text-sm">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="rounded-lg">
+                    {PAGE_LIMITS.map((n) => (
+                      <SelectItem key={n} value={String(n)} className="rounded-lg">
+                        {n}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {hasFilters && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={clearFilters}
+                  className="text-destructive hover:text-destructive h-8"
+                >
+                  <X className="h-3.5 w-3.5 me-1" />
+                  {t("clearFilters")}
+                </Button>
+              )}
             </div>
-          )}
+          </div>
         </CardContent>
       </Card>
-
-      {!hasFilters && (
-        <p className="text-sm text-muted-foreground mb-4">
-          {t("productCount", { count: filtered.length })}
-        </p>
-      )}
 
       {/* AnimatePresence with mode="wait" ensures the old grid fades out
           before the new one fades in when filters change. */}
       <AnimatePresence mode="wait">
         {filtered.length === 0 ? (
           <motion.div
+            key="empty"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -186,12 +222,54 @@ export function ProductFilter({ products }: ProductFilterProps) {
           </motion.div>
         ) : (
           <motion.div
-            layout
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
+            key={`page-${safePage}-${limit}`}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
           >
-            {filtered.map((product, index) => (
-              <ProductCard key={product.id} product={product} index={index} />
-            ))}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {paginatedProducts.map((product, index) => (
+                <ProductCard key={product.id} product={product} index={index} />
+              ))}
+            </div>
+
+            {/* Pagination controls — prev/next buttons with page info. */}
+            {totalPages > 1 && (
+              <div className="flex items-center justify-between mt-6">
+                <p className="text-sm text-muted-foreground">
+                  {t("pagination.showing", {
+                    from: startIndex + 1,
+                    to: endIndex,
+                    total: filtered.length,
+                  })}
+                </p>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setPage((p) => Math.max(1, p - 1))}
+                    disabled={safePage <= 1}
+                    className="rounded-lg"
+                  >
+                    <ChevronLeft className="h-4 w-4 me-1" />
+                    {t("pagination.previous")}
+                  </Button>
+                  <span className="text-sm text-muted-foreground px-2">
+                    {safePage} / {totalPages}
+                  </span>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                    disabled={safePage >= totalPages}
+                    className="rounded-lg"
+                  >
+                    {t("pagination.next")}
+                    <ChevronRight className="h-4 w-4 ms-1" />
+                  </Button>
+                </div>
+              </div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>

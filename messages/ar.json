@@ -38,6 +38,12 @@
       "Large": "كبير",
       "Medium": "متوسط",
       "Small": "صغير"
+    },
+    "pagination": {
+      "showing": "عرض {from}-{to} من {total}",
+      "previous": "السابق",
+      "next": "التالي",
+      "perPage": "لكل صفحة"
     }
   },
   "productDetail": {

@@ -35,6 +35,12 @@
       "Large": "Large",
       "Medium": "Medium",
       "Small": "Small"
+    },
+    "pagination": {
+      "showing": "Showing {from}-{to} of {total}",
+      "previous": "Previous",
+      "next": "Next",
+      "perPage": "Per page"
     }
   },
   "productDetail": {
